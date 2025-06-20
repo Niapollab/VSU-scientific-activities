@@ -1,0 +1,21 @@
+@startuml
+title Высокоуровневое представление системы
+
+component game_client
+component game_server
+component game_core
+component model_set_server
+component model_trainer
+component model_uploader
+component model_core
+
+game_server <-- game_client
+game_core   <-- game_server
+model_set_server  <-- game_server
+
+game_core   <-- model_core
+model_core  <-- model_set_server
+model_core  <-- model_trainer
+
+model_set_server  <-- model_uploader
+@enduml
