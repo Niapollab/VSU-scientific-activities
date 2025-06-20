@@ -27,6 +27,13 @@
 \RequirePackage{indentfirst}
 \setlength{\parindent}{1.25cm}
 
+% Set left indent for list items
+\RequirePackage{enumitem}
+\setlist{left=\parindent}
+
+% Replace bullet to dashes in lists
+\let\labelitemi\labelitemii
+
 % Set dynamic spaces between words
 \sloppy
 
