@@ -71,6 +71,8 @@
 % \begin{df}[width]{columns}{t, m, b}{caption}{ref}
 \NewEnviron{df}[5][\dfwidth]{%
     \begin{table}[!ht]
+        \refstepcounter{table}
+        \noindent\hfill \tablename~\thetable. #4\par\vspace{3pt}
         \centering
         \let\@oldtabularxcolumn\tabularxcolumn
         \renewcommand\tabularxcolumn[1]{#3{##1}}
@@ -78,7 +80,6 @@
             \BODY
         \end{tabularx}
         \let\tabularxcolumn\@oldtabularxcolumn
-        \caption{#4}
         \label{table:#5}
     \end{table}
 }
@@ -87,6 +88,8 @@
 % \begin{df*}[width]{columns}{t, m, b}{caption}
 \NewEnviron{df*}[4][\dfwidth]{%
     \begin{table}[!ht]
+        \refstepcounter{table}
+        \noindent\hfill \tablename~\thetable. #4\par\vspace{3pt}
         \centering
         \let\@oldtabularxcolumn\tabularxcolumn
         \renewcommand\tabularxcolumn[1]{#3{##1}}
@@ -94,7 +97,6 @@
             \BODY
         \end{tabularx}
         \let\tabularxcolumn\@oldtabularxcolumn
-        \caption{#4}
     \end{table}
 }
 
