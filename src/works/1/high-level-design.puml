@@ -1,21 +1,21 @@
 @startuml
 title Высокоуровневое представление системы
 
-component game_client
-component game_server
-component game_core
-component model_set_server
-component model_trainer
-component model_uploader
-component model_core
+component edupra_game_client
+component edupra_game_server
+component gym_backgammon
+component edupra_model_server
+component edupra_model_builder
+component edupra_model_evaluator
+component edupra_core
 
-game_server <-- game_client
-game_core   <-- game_server
-model_set_server  <-- game_server
+edupra_game_server <-- edupra_game_client
+gym_backgammon  <-- edupra_game_server
+edupra_model_server  <-- edupra_game_server
 
-game_core   <-- model_core
-model_core  <-- model_set_server
-model_core  <-- model_trainer
+gym_backgammon  <-- edupra_core
+edupra_core  <-- edupra_model_server
+edupra_core  <-- edupra_model_builder
 
-model_set_server  <-- model_uploader
+edupra_core  <-- edupra_model_evaluator
 @enduml
