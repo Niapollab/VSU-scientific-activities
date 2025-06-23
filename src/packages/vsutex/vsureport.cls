@@ -29,6 +29,7 @@
 \let\@oldbibliography\bibliography
 \renewcommand{\bibliography}[1]{%
     \cleardoublepage
+    \renewcommand\refname{Список используемых источников}
     \phantomsection\addcontentsline{toc}{section}{\refname}
     \let\@oldhbadness\hbadness
     \hbadness 10000
