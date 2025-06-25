@@ -42,7 +42,7 @@
 \titleformat{\section}{\normalfont\normalsize\centering\bfseries}{\thesection. }{0pt}{}
 
 % Add hyperrefs to the document
-\RequirePackage{hyperref}
+\RequirePackage[hidelinks]{hyperref}
 
 % Replace : to . in captions
 \RequirePackage[labelsep=period]{caption}
