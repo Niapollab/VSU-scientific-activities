@@ -1,0 +1,167 @@
+@startuml edupra_core_architecture
+
+!define RECTANGLE class
+
+' Цветовая схема
+!define MODEL_COLOR #E6F3FF
+!define AGENT_COLOR #FFE6E6
+!define UTILS_COLOR #E6FFE6
+!define EXTERNAL_COLOR #F0E6FF
+
+' Основной пакет
+package "edupra_core" {
+
+  ' Модели
+  package "models" MODEL_COLOR {
+
+    RECTANGLE BaseModel <<Базовая модель>> {
+      # lr: float
+      # lamda: float
+      # start_episode: int
+      # eligibility_traces: list
+      # optimizer: Optimizer
+      --
+      + __init__(lr, lamda, seed)
+      + update_weights(p, p_next): abstract
+      + forward(x): abstract
+      + init_weights(): abstract
+      + init_eligibility_traces(): void
+      + checkpoint(path, step, name): void
+      + load(path, optimizer, eligibility): void
+      + train_agent(env, n_episodes, ...): void
+      + compare_with(env, n_episodes, other): dict
+    }
+
+    RECTANGLE TDGammon <<TD-Gammon модель>> {
+      - hidden: Dense
+      - output_layer: Dense
+      - input_units: int
+      - hidden_units: int
+      - output_units: int
+      --
+      + __init__(hidden_units, lr, lamda, init_weights, ...)
+      + init_weights(): void
+      + call(inputs): tensor
+      + forward(x): tensor
+      + update_weights(p, p_next): float
+    }
+  }
+
+  ' Агенты
+  package "agents" AGENT_COLOR {
+
+    RECTANGLE Agent <<Базовый агент>> {
+      # color: int
+      # name: str
+      --
+      + __init__(color)
+      + roll_dice(): tuple
+      + choose_best_action(actions, env): abstract
+    }
+
+    RECTANGLE RandomAgent <<Случайный агент>> {
+      --
+      + __init__(color)
+      + choose_best_action(actions, env): action
+    }
+
+    RECTANGLE HumanAgent <<Человек-игрок>> {
+      --
+      + __init__(color)
+      + choose_best_action(actions, env): action
+    }
+
+    RECTANGLE TDAgent <<TD-агент>> {
+      - net: BaseModel
+      --
+      + __init__(color, net)
+      + choose_best_action(actions, env): action
+    }
+  }
+
+  ' Утилиты
+  package "utils" UTILS_COLOR {
+
+    RECTANGLE path <<модуль>> {
+      --
+      + ensure_exists(path): void
+    }
+
+    RECTANGLE evaluate_agents <<функция>> {
+      --
+      + evaluate_agents(agents, env, n_episodes): dict
+    }
+  }
+}
+
+' Внешние зависимости
+package "External Dependencies" EXTERNAL_COLOR {
+
+  package "TensorFlow/Keras" {
+    RECTANGLE keras.Model <<базовый класс>> {
+      + trainable_weights
+      + save_weights()
+      + load_weights()
+      + build()
+    }
+
+    RECTANGLE layers.Dense <<слой>> {
+      + kernel
+      + bias
+      + activation
+    }
+  }
+
+  package "gym_backgammon" {
+    RECTANGLE BackgammonEnv <<окружение>> {
+      + step()
+      + reset()
+      + get_valid_actions()
+      + get_opponent_agent()
+    }
+
+    RECTANGLE Constants <<константы>> {
+      WHITE = 0
+      BLACK = 1
+      COLORS = ["white", "black"]
+    }
+  }
+}
+
+' Связи наследования
+BaseModel --|> keras.Model : наследует
+TDGammon --|> BaseModel : наследует
+RandomAgent --|> Agent : наследует
+HumanAgent --|> Agent : наследует
+TDAgent --|> Agent : наследует
+
+' Связи использования
+TDAgent --> BaseModel : использует
+BaseModel --> layers.Dense : использует
+Agent ..> BackgammonEnv : взаимодействует
+evaluate_agents ..> Agent : оценивает
+BaseModel ..> TDAgent : создаёт для обучения
+
+' Примечания
+note right of BaseModel
+  Базовый класс для всех моделей обучения с подкреплением
+  - Поддержка eligibility traces для TD(λ)
+  - Сохранение/загрузка чекпоинтов
+  - Встроенный цикл обучения
+end note
+
+note bottom of TDGammon
+  Реализация нейронной сети TD-Gammon
+  - Архитектура: 198 входов → скрытый слой → 1 выход
+  - Активация: sigmoid
+  - Обучение: temporal difference learning
+end note
+
+note left of Agent
+  Иерархия агентов для игры
+  - RandomAgent: случайные ходы
+  - HumanAgent: интерфейс для человека
+  - TDAgent: использует нейросеть для выбора ходов
+end note
+
+@enduml

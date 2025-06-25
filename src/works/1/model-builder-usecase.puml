@@ -1,0 +1,51 @@
+@startuml
+!define RECTANGLE class
+
+title Диаграмма вариантов использования модуля для тренировки интеллектуальных агентов
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Пользователь" as User
+actor "Система" as System
+
+rectangle "Edupra Model Builder" {
+  usecase "Запустить построитель\nмоделей" as UC1
+  usecase "Указать параметры\nобучения" as UC2
+  usecase "Создать новую\nмодель TDGammon" as UC3
+  usecase "Загрузить существующую\nмодель" as UC4
+  usecase "Обучить модель" as UC5
+  usecase "Сохранить модель и параметры\nэксперимента" as UC6
+  usecase "Инициализировать\nвеса" as UC7
+  usecase "Настроить окружение\nBackgammon" as UC8
+}
+
+User --> UC1
+UC1 --> UC2
+UC2 --> UC3
+UC2 ..> UC4 : <<extend>>\nесли указан --model
+UC3 --> UC7
+UC3 --> UC8
+UC4 --> UC8
+UC8 --> UC5
+UC5 ..> UC6 : <<include>>\nесли указан --save_path
+
+System --> UC5
+System --> UC6
+
+note right of UC2
+  Параметры:
+  - learning rate (--lr)
+  - hidden units (--hidden_units)
+  - lambda (--lamda)
+  - episodes (--episodes)
+  - seed (--seed)
+  - и другие
+end note
+
+note bottom of UC5
+  Использует TD-learning
+  с eligibility traces
+end note
+
+@enduml

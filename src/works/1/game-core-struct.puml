@@ -1,0 +1,114 @@
+@startuml gym_backgammon_architecture
+
+!define RECTANGLE class
+
+' Цветовая схема
+!define INTERFACE_COLOR #FFE4B5
+!define ENV_COLOR #E6F3FF
+!define GAME_COLOR #FFE6E6
+!define RENDER_COLOR #E6FFE6
+!define AGENT_COLOR #F0E6FF
+
+' Основной пакет
+package "gym_backgammon" {
+
+  ' Классы окружения
+  RECTANGLE BackgammonEnv <<Окружение>> ENV_COLOR {
+    - game: Backgammon
+    - current_agent: int
+    - counter: int
+    - max_length_episode: int
+    --
+    + step(action): observation, reward, done, winner
+    + reset(): agent, roll, observation
+    + render(mode): image/bool
+    + get_valid_actions(roll): set
+    + get_opponent_agent(): int
+  }
+
+  ' Логика игры
+  RECTANGLE Backgammon <<Логика игры>> GAME_COLOR {
+    - board: list
+    - bar: list[int, int]
+    - off: list[int, int]
+    - players_positions: dict
+    - state: BackgammonState
+    --
+    + get_valid_plays(player, roll): set
+    + execute_play(player, action): void
+    + get_board_features(player): list[float]
+    + get_winner(): int/None
+    + render(): void
+    + save_state(): BackgammonState
+    + restore_state(state): void
+    -- Генерация ходов --
+    + get_normal_plays(player, roll): set
+    + get_bear_off_plays(player, roll): set
+    + get_bar_plays(player, roll): set
+  }
+
+  ' Структуры данных
+  RECTANGLE BackgammonState <<namedtuple>> {
+    + board: list
+    + bar: list
+    + off: list
+    + players_positions: list
+  }
+
+  ' Константы
+  RECTANGLE Constants <<константы>> {
+    WHITE = 0
+    BLACK = 1
+    NUM_POINTS = 24
+    BAR = "bar"
+    OFF = "off"
+  }
+}
+
+' Внешние зависимости
+package "OpenAI Gym" INTERFACE_COLOR {
+  RECTANGLE gym.Env <<интерфейс>> {
+    + step()
+    + reset()
+    + render()
+    + close()
+  }
+
+  RECTANGLE gym.Space <<абстрактный класс>> {
+    + Box
+  }
+}
+
+' Пример использования
+package "examples" AGENT_COLOR {
+  RECTANGLE RandomAgent <<Агент>> {
+    - color: int
+    - name: str
+    --
+    + roll_dice(): tuple
+    + choose_best_action(actions, env): action
+  }
+}
+
+' Связи
+BackgammonEnv --|> gym.Env : реализует
+BackgammonEnv --> Backgammon : использует
+Backgammon --> BackgammonState : создаёт
+RandomAgent ..> BackgammonEnv : взаимодействует
+
+' Примечания
+note right of BackgammonEnv
+  Основной класс окружения
+  - Пространство наблюдений: 198 признаков
+  - Пространство действий: переменное (зависит от броска кубиков)
+  - Вознаграждение: +1 за победу WHITE, 0 за победу BLACK
+end note
+
+note bottom of Backgammon
+  Реализация основной логики игры
+  - Генерация допустимых ходов
+  - Управление состоянием доски
+  - Извлечение признаков для обучения с подкреплением
+end note
+
+@enduml

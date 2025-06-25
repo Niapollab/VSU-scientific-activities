@@ -1,0 +1,58 @@
+@startuml
+!define RECTANGLE class
+
+title Диаграмма вариантов использования модуля для тестирования натренированных интеллектуальных агентов
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Пользователь" as User
+actor "Модель 1" as Model1
+actor "Модель 2" as Model2
+
+rectangle "Edupra Model Evaluator" {
+  usecase "Запустить оценщик\nмоделей" as UC1
+  usecase "Указать параметры\nоценки" as UC2
+  usecase "Загрузить первую\nмодель" as UC3
+  usecase "Загрузить вторую\nмодель" as UC4
+  usecase "Создать игровое\nокружение" as UC5
+  usecase "Провести серию игр" as UC6
+  usecase "Сравнить модели\nмежду собой" as UC7
+  usecase "Оценить модель\nпротив случайного агента" as UC8
+  usecase "Вывести результаты\nоценки" as UC9
+}
+
+User --> UC1
+UC1 --> UC2
+UC2 --> UC3
+UC3 --> UC5
+UC2 ..> UC4 : <<extend>>\nесли указан --second
+UC5 --> UC6
+UC6 --> UC7 : если две модели
+UC6 --> UC8 : если одна модель
+UC7 --> UC9
+UC8 --> UC9
+
+Model1 --> UC3
+Model2 --> UC4
+
+note right of UC2
+  Параметры:
+  - first model path (--first)
+  - second model path (--second)
+  - episodes (--episodes)
+  - hidden units (--h1, --h2)
+end note
+
+note bottom of UC6
+  Использует метод compare_with
+  из класса BaseModel
+end note
+
+note left of UC9
+  Выводит статистику:
+  - процент побед
+  - количество игр
+end note
+
+@enduml

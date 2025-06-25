@@ -1,0 +1,72 @@
+@startuml
+!theme plain
+
+title Диаграмма взаимодействия пользователя с серверными и клиентским модулями игры
+actor "Пользователь" as User
+participant "Браузер" as Browser
+participant "Game Server\n(FastAPI)" as GameServer
+participant "Model Server" as ModelServer
+database "State Repository" as StateRepo
+
+== Инициализация сессии ==
+
+User -> Browser: Открывает сайт
+Browser -> GameServer: GET /
+GameServer -> GameServer: Проверяет cookie сессии
+alt Сессия не существует
+    GameServer -> GameServer: Генерирует UUID
+    GameServer -> GameServer: Создаёт новую сессию
+end
+GameServer -> Browser: Возвращает index.html\n+ cookie с session[uid]
+Browser -> Browser: Загружает статические файлы\n(JS, CSS)
+Browser -> User: Отображает игровое поле
+
+== Игровой процесс ==
+
+User -> Browser: Нажимает «Бросить кости»
+Browser -> GameServer: POST /roll_dice
+GameServer -> GameServer: Извлекает UID из сессии
+GameServer -> GameServer: Генерирует значения костей
+GameServer -> Browser: Возвращает значения костей
+Browser -> User: Показывает результат броска
+
+User -> Browser: Выбирает ход
+Browser -> GameServer: POST /\n{move, dice, board_state}
+GameServer -> GameServer: Извлекает UID из сессии
+GameServer -> ModelServer: POST /make_turn\nHeaders: {UID: session_uid}\nBody: {move, dice, board_state}
+
+ModelServer -> StateRepo: Получает состояние игры[uid]
+alt Первый ход
+    ModelServer -> StateRepo: Создаёт новое состояние
+end
+ModelServer -> ModelServer: Обрабатывает ход игрока
+ModelServer -> ModelServer: Вычисляет ход AI\n(TDGammon)
+ModelServer -> StateRepo: Сохраняет новое состояние
+ModelServer -> GameServer: Возвращает ответ AI\n{move, board_state, game_status}
+
+GameServer -> Browser: Передаёт ответ AI
+Browser -> Browser: Обновляет доску
+Browser -> User: Показывает ход AI
+
+alt Игра окончена
+    Browser -> User: Показывает результат игры
+else Игра продолжается
+    Browser -> User: Ожидает следующий ход
+end
+
+== Обработка ошибок ==
+
+alt Сессия истекла
+    Browser -> GameServer: POST / (без валидной сессии)
+    GameServer -> Browser: 401 Unauthorized
+    Browser -> User: Предлагает обновить страницу
+end
+
+alt Model Server недоступен
+    GameServer -> ModelServer: POST /make_turn
+    ModelServer --x GameServer: Timeout/Error
+    GameServer -> Browser: 503 Service Unavailable
+    Browser -> User: Показывает сообщение об ошибке
+end
+
+@enduml
