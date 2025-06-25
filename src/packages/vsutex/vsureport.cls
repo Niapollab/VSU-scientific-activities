@@ -14,9 +14,24 @@
 \onehalfspacing
 
 % Set section styles
-\titleformat{\subsection}{\normalfont\normalsize\centering\bfseries}{\thesubsection. }{0pt}{}
-\titleformat{\subsubsection}{\normalfont\normalsize\centering\bfseries}{\thesubsubsection. }{0pt}{}
+\titleformat{\subsection}{\normalfont\normalsize\centering\bfseries\itshape}{\thesubsection. }{0pt}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\centering\itshape}{\thesubsubsection. }{0pt}{}
 \let\sectionbreak\clearpage
+
+% Set the page numbers in the footer
+\RequirePackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\headheight}{31pt}
+\fancyhead[C]{\thepage}
+\renewcommand\headrulewidth{0pt}
+
+% Make plain pages (like ToC) use fancy style
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyhead[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
 
 % Set toc styles
 \RequirePackage{titletoc}
