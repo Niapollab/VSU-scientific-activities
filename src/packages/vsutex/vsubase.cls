@@ -48,7 +48,31 @@
 \RequirePackage[labelsep=period]{caption}
 
 % Set gost style for bibliography
-\bibliographystyle{pugost2008}
+\RequirePackage[backend=biber, style=gost-numeric, sorting=none]{biblatex}
+\addbibresource{sources.bib}
+
+% Add bibliography to toc and ignore hbadness
+\makeatletter
+
+\newcommand{\@bibtitle}{\PackageError{vsureport}{Set bibtitle before using printbibliography}{}}
+\newcommand{\bibtitle}[1]{\renewcommand{\@bibtitle}{#1}}
+
+\let\@oldprintbibliography\printbibliography
+\renewcommand{\printbibliography}[1][]{%
+  \clearpage
+  \phantomsection
+  \begingroup
+    \let\@oldhbadness\hbadness
+    \hbadness=10000
+    \@oldprintbibliography[
+      heading=bibintoc,
+      title={\@bibtitle},
+      #1
+    ]
+    \let\hbadness\@oldhbadness
+  \endgroup
+}
+\makeatother
 
 % Add ability to use & in equations properly
 \RequirePackage{amsmath}
