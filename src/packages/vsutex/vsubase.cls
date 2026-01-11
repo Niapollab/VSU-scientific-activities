@@ -49,6 +49,7 @@
 
 % Set gost style for bibliography
 \RequirePackage[backend=biber, style=gost-numeric, sorting=none]{biblatex}
+\RequirePackage{csquotes}
 \addbibresource{sources.bib}
 
 % Add bibliography to toc and ignore hbadness
