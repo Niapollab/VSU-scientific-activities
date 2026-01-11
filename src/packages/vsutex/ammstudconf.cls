@@ -17,7 +17,7 @@
 \makeatletter
 
 % Set conference name
-\newcommand{\@confname}[0]{Конференция школьников, студентов и молодых ученых}
+\newcommand{\@confname}{Конференция школьников, студентов и молодых ученых}
 \newcommand{\confname}[1]{\renewcommand{\@confname}{#1}}
 
 \RequirePackage{fancyhdr}
@@ -32,21 +32,8 @@
 \renewcommand{\footrulewidth}{0pt}
 \makeatother
 
-% Rename bibliography section and ignore hbadness
-\makeatletter
-\let\@oldbibliography\bibliography
-\let\@oldrefname\refname
-\renewcommand{\bibliography}[1]{%
-    \renewcommand{\refname}{Литература}
-    \let\@oldhbadness\hbadness
-    \hbadness 10000
-    \@oldbibliography{#1}
-    \let\hbadness\@oldhbadness
-    \let\@oldhbadness\undefine
-    \let\refname\@oldrefname
-    \let\@oldrefname\undefine
-}
-\makeatother
+% Set bibliography title
+\bibtitle{Литература}
 
 % Add contacts information
 % \contact{fullname}{info}{email}
@@ -56,11 +43,11 @@
 \makeatletter
 
 % Set universal decimal classification
-\newcommand{\@udk}[0]{\PackageError{vsureport}{Set udk before the using maketitle}}
+\newcommand{\@udk}{\PackageError{vsureport}{Set udk before the using maketitle}{}}
 \newcommand{\udk}[1]{\renewcommand{\@udk}{#1}}
 
 % Set university
-\newcommand{\@university}[0]{Воронежский государственный университет}
+\newcommand{\@university}{Воронежский государственный университет}
 \newcommand{\university}[1]{\renewcommand{\@university}{#1}}
 
 % Patch maketitle command and ignore hbox

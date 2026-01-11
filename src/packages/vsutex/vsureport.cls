@@ -39,20 +39,8 @@
 \titlecontents{subsection}[0pt]{\normalfont\normalsize}{\thecontentslabel. }{}{\dotfill\contentspage}
 \titlecontents{subsubsection}[0pt]{\normalfont\normalsize}{\thecontentslabel. }{}{\dotfill\contentspage}
 
-% Add bibliography to toc and ignore hbadness
-\makeatletter
-\let\@oldbibliography\bibliography
-\renewcommand{\bibliography}[1]{%
-    \cleardoublepage
-    \renewcommand\refname{Список используемых источников}
-    \phantomsection\addcontentsline{toc}{section}{\refname}
-    \let\@oldhbadness\hbadness
-    \hbadness 10000
-    \@oldbibliography{#1}
-    \let\hbadness\@oldhbadness
-    \let\@oldhbadness\undefine
-}
-\makeatother
+% Set bibliography title
+\bibtitle{Список используемых источников}
 
 % Set title style
 \RequirePackage{titling}
@@ -73,19 +61,19 @@
 \newcommand{\sciadvgrade}[1]{\renewcommand{\@sciadvgrade}{#1}}
 
 % Set department
-\newcommand{\@department}[0]{\PackageError{vsureport}{Set department before the using maketitle}}
+\newcommand{\@department}[0]{\PackageError{vsureport}{Set department before the using maketitle}{}}
 \newcommand{\department}[1]{\renewcommand{\@department}{#1}}
 
 % Set title description
-\newcommand{\@titledesc}[0]{\PackageError{vsureport}{Set titledesc before the using maketitle}}
+\newcommand{\@titledesc}[0]{\PackageError{vsureport}{Set titledesc before the using maketitle}{}}
 \newcommand{\titledesc}[1]{\renewcommand{\@titledesc}{#1}}
 
 % Set direction
-\newcommand{\@direction}[0]{\PackageError{vsureport}{Set direction before the using maketitle}}
+\newcommand{\@direction}[0]{\PackageError{vsureport}{Set direction before the using maketitle}{}}
 \newcommand{\direction}[1]{\renewcommand{\@direction}{#1}}
 
 % Set profile
-\newcommand{\@profile}[0]{\PackageError{vsureport}{Set profile before the using maketitle}}
+\newcommand{\@profile}[0]{\PackageError{vsureport}{Set profile before the using maketitle}{}}
 \newcommand{\profile}[1]{\renewcommand{\@profile}{#1}}
 
 % Set author grade
