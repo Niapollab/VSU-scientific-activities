@@ -1,6 +1,8 @@
 {
-    "image": "hegerdes/vscode-latex",
     "name": "LaTeX",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
     "customizations": {
         "vscode": {
             "extensions": [
@@ -42,7 +44,6 @@
         }
     },
     "postCreateCommand": {
-        "install-times-cyrillic-biblatex-and-biber": "sed -i 's/main/main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources && apt update -y && apt install -y ttf-mscorefonts-installer texlive-lang-cyrillic texlive-bibtex-extra biber",
         "install-vsutex": "ln -sd `find /workspaces -type d -name vsutex 2>/dev/null | head -1` /usr/share/texmf/tex/latex && texhash"
     }
 }
