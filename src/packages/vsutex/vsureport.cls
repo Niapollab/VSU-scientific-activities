@@ -42,6 +42,17 @@
 % Set bibliography title
 \bibtitle{Список используемых источников}
 
+% List settings: enumerate with hanging first line (indented, subsequent lines flush left)
+\RequirePackage{enumitem}
+\setlist[enumerate]{
+    leftmargin=0pt,      % no indent for subsequent lines
+    itemindent=\parindent,      % indent for the first line (paragraph indent)
+    labelsep=0pt,        % no space between label and text
+    labelwidth=0pt,      % label takes no horizontal space
+    align=left,          % label aligned to the left
+    widest=99,           % reserve space for the widest label (can use widest*)
+}
+
 % Set title style
 \RequirePackage{titling}
 \makeatletter
